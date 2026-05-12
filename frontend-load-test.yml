@@ -1,0 +1,18 @@
+config:
+  target: "http://localhost:3001"
+  phases:
+    - duration: 10
+      arrivalRate: 5
+      name: Warm up phase
+    - duration: 20
+      arrivalRate: 5
+      rampTo: 20
+      name: Ramp up phase
+    - duration: 30
+      arrivalRate: 20
+      name: Peak load phase
+scenarios:
+  - name: "Visit browse page"
+    flow:
+      - get:
+          url: "/browse"
