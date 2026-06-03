@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useBrowseStore } from "@/domain/browse/browseStore";
-import { fetchPublicListings } from "@/domain/browse/useCases/fetchPublicListings";
-import { ListingCard } from "@/ui/browse/ListingCard";
+import { useBrowseStore } from "@/domain/browseStore";
+import { fetchPublicListings } from "@/domain/browseActions";
+import { ListingCard } from "@/ui/ListingCard";
 import { Search, X, Loader2, SlidersHorizontal, MapPin, Banknote } from "lucide-react";
 
 /**
@@ -11,7 +11,7 @@ import { Search, X, Loader2, SlidersHorizontal, MapPin, Banknote } from "lucide-
  * Features a clean search bar and a floating filter button for price/location.
  */
 export default function BrowsePage() {
-  const { listings, isLoading, error, hasLoaded } = useBrowseStore();
+  const { listings, meta, isLoading, error, hasLoaded } = useBrowseStore();
   
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,14 +19,17 @@ export default function BrowsePage() {
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
   const [showFilterHint, setShowFilterHint] = useState(true);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchPublicListings();
+    fetchPublicListings(currentPage, 20, true);
     
     // Hide filter hint after 3 seconds
     const timer = setTimeout(() => setShowFilterHint(false), 5000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [currentPage]);
 
   // Get unique locations for filter
   const locations = useMemo(() => {
@@ -153,6 +156,29 @@ export default function BrowsePage() {
             {filteredListings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {!isLoading && hasLoaded && meta && meta.totalPages > 1 && (
+          <div className="mt-12 flex items-center justify-center gap-2">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="rounded-xl border border-border px-4 py-2 text-sm font-bold disabled:opacity-50 transition-colors hover:bg-muted"
+            >
+              Previous
+            </button>
+            <span className="text-sm font-medium text-muted-foreground mx-4">
+              Page {currentPage} of {meta.totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(meta.totalPages, p + 1))}
+              disabled={currentPage === meta.totalPages}
+              className="rounded-xl border border-border px-4 py-2 text-sm font-bold disabled:opacity-50 transition-colors hover:bg-muted"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>

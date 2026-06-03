@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tafutanga - Property Listing App
 
-## Getting Started
+Tafutanga helps Kenyans in Nairobi make house hunting easier. This frontend repository is built using Next.js (App Router), Tailwind CSS v4, Zustand, and Lucide React.
 
-First, run the development server:
+## File Structure & Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The project has been architected to strictly flatten business logic and UI components, eliminating deep nesting and redundant subdirectories. All primary source code lives inside `src/`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 1. `src/app/`
+Contains Next.js App Router definitions. Next.js enforces a folder-based routing mechanism, so this directory contains the flat layout of routing folders required.
+- `browse/`: The public browsing pages for house hunters.
+- `landlord/`: The protected landlord portal, which houses flat routing subdirectories (`signin/`, `signup/`, `units/`, `rooms/`, `listings/`) governed by a single unified layout.
+- `globals.css`: Global styles including Tailwind directives.
+- `layout.js` & `page.js`: The root layout and index page.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 2. `src/domain/`
+Contains purely flat business logic. **Zero subfolders exist here.** It organizes logic across our bounded contexts (Auth, Browse, Properties) using file prefixes instead of folders.
+- **`authClient.js`**: API calls related to landlord authentication.
+- **`authStore.js`**: Global state (Zustand) for landlord sessions.
+- **`authActions.js`**: Use cases and business actions for signing in and signing up.
+- **`browseClient.js`**: API calls for public house hunters to fetch listings.
+- **`browseStore.js`**: Global state (Zustand) for search filters and browsing state.
+- **`browseActions.js`**: Use cases for fetching listings and search logic.
+- **`browseTime.js`**: Shared time formatting utilities for the browse domain.
+- **`propertyStore.js`**: Global state (Zustand) for landlord's registered units and active room listings.
+- **`propertyTypes.js`**: Shared data transformations and labels (e.g., formatting a unit name).
+- **`propertyActions.js`**: Centralized CRUD operations for units and room listings (create, read, update, delete).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. `src/ui/`
+Contains shared React components and UI stores in a flat structure. **Zero subfolders exist here.**
+- **`AppHeader.jsx`**: The main navigation header used across the app.
+- **`ConfirmModal.jsx`**: Reusable generic modal for destructive actions (e.g., deleting a unit).
+- **`ListingCard.jsx`**: Component to render an individual room listing visually.
+- **`ThemeToggle.jsx`**: A button component to toggle between light and dark modes.
+- **`ToastViewport.jsx`**: The toast notification UI container.
+- **`themeStore.js`**: Global state (Zustand) tracking user's light/dark mode preference.
+- **`toastStore.js`**: Global state (Zustand) tracking active notifications.
 
-## Learn More
+## Project Rules
 
-To learn more about Next.js, take a look at the following resources:
+1. **Flat Structure**: Do not create subdirectories inside `src/domain/` or `src/ui/`. Group related functionality into single prefixed files (e.g., `propertyActions.js`).
+2. **Tailwind Only**: Use Tailwind CSS utility classes exclusively. No CSS modules or styled-components.
+3. **No Emojis**: Do not use emojis in UI copy, documentation, or commit messages. Keep the tone professional.
+4. **Zustand for State**: Use Zustand for global state management.
+5. **Robustness**: Always validate inputs, preserve invariants, and handle errors intentionally. Add short 1-line comments explaining *why* specific logic exists.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Running Locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Install dependencies: `npm install`
+2. Start the dev server: `npm run dev`

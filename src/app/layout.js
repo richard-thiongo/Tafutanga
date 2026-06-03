@@ -1,18 +1,30 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
-import { AppHeader } from "@/ui/navigation/AppHeader";
-import { ToastViewport } from "@/ui/toast/ToastViewport";
+import { AppHeader } from "@/ui/AppHeader";
+import { ToastViewport } from "@/ui/ToastViewport";
 
+// geist font
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+// geistMono font
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+
+// cormorant font
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
+
+// metadata
 export const metadata = {
   title: {
     default: "Tafutanga",
@@ -32,7 +44,7 @@ export const metadata = {
   ],
   metadataBase: new URL("https://tafutanga.vercel.app"),
   icons: {
-    icon: "/favicon.ico.png",
+    icon: "/main-logo.png",
   },
 };
 
@@ -40,16 +52,9 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`dark ${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var k='tafutanga:theme';var t=localStorage.getItem(k);if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.classList.toggle('dark',t==='dark')}catch(e){}})();`,
-          }}
-        />
-      </head>
+      <head />
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <AppHeader />
         <main className="flex flex-1 flex-col">{children}</main>
