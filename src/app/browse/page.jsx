@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useBrowseStore } from "@/domain/browseStore";
 import { fetchPublicListings } from "@/domain/browseActions";
 import { ListingCard } from "@/ui/ListingCard";
-import { Search, X, Loader2, SlidersHorizontal, MapPin, Banknote } from "lucide-react";
+import { Search, X, Loader2, SlidersHorizontal, MapPin, Banknote, RefreshCw } from "lucide-react";
 
 /**
  * BrowsePage allows users to search through available house listings in Nairobi.
@@ -24,7 +24,7 @@ export default function BrowsePage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchPublicListings(currentPage, 20, true);
+    fetchPublicListings(currentPage, 20, false);
     
     // Hide filter hint after 3 seconds
     const timer = setTimeout(() => setShowFilterHint(false), 5000);
@@ -77,10 +77,10 @@ export default function BrowsePage() {
           </p>
         </div>
 
-        {/* Sticky Search Bar */}
+        {/* Sticky Search Bar and Refresh */}
         <div className="sticky top-[72px] z-30 -mx-6 mb-12 bg-background/80 px-6 py-4 backdrop-blur-md md:top-[88px]">
-          <div className="mx-auto max-w-xl">
-            <div className="relative group">
+          <div className="mx-auto max-w-xl flex items-center gap-3">
+            <div className="relative group flex-1">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <input
                 type="text"
@@ -104,6 +104,14 @@ export default function BrowsePage() {
                 </div>
               )}
             </div>
+            <button
+              onClick={() => fetchPublicListings(currentPage, 20, true)}
+              disabled={isLoading}
+              title="Refresh listings"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground shadow-sm transition-all hover:border-primary hover:text-primary disabled:opacity-50"
+            >
+              <RefreshCw className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`} />
+            </button>
           </div>
         </div>
 

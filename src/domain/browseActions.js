@@ -9,7 +9,12 @@ import { publicJson } from "@/domain/browseClient";
  * @param {boolean} force - Whether to bypass cache.
  */
 export async function fetchPublicListings(page = 1, limit = 20, force = false) {
-  const { setListings, setLoading, setError, hasLoaded } = useBrowseStore.getState();
+  const { setListings, setLoading, setError, hasLoaded, lastFetchedPage } = useBrowseStore.getState();
+
+  // If we already have the data for this page and are not forcing a refresh, skip the request
+  if (hasLoaded && lastFetchedPage === page && !force) {
+    return;
+  }
 
   // Only show the blocking loading spinner if we have NO data yet or if it's a forced refresh
   if (!hasLoaded || force) {
@@ -18,7 +23,7 @@ export async function fetchPublicListings(page = 1, limit = 20, force = false) {
 
   try {
     const response = await publicJson(`/properties/all?page=${page}&limit=${limit}`);
-    setListings(response.data, response.meta);
+    setListings(response.data, response.meta, page);
   } catch (error) {
     // If we already have data, don't break the UI with an error screen, just log it
     if (hasLoaded) {
